@@ -1,0 +1,29 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-backend-deployment
+  labels:
+    app: elefanti-video-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elefanti-video-backend
+  template:
+    metadata:
+      labels:
+        app: elefanti-video-backend
+    spec:
+      containers:
+      - name: elefanti-video-backend
+        image: detibaholli/elefantivideobackend:latest
+        ports:
+        - containerPort: 80
+      #   volumeMounts:
+      #   - name: video-backend
+      #     mountPath: /var/video-backend_home
+      # volumes:
+      # - name: video-backend
+      #   persistentVolumeClaim:
+      #     claimName: video-backend-pvc
