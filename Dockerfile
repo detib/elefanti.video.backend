@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["/elefanti.video.backend/elefanti.video.backend.csproj", "."]
+COPY ["elefanti.video.backend.csproj", "."]
 RUN dotnet restore "elefanti.video.backend.csproj"
 COPY /elefanti.video.backend .
 WORKDIR "/src/."
