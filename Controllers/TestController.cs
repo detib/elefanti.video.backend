@@ -8,7 +8,7 @@ namespace elefanti.video.backend.Controllers {
 
         [HttpGet]
         public ActionResult Get() {
-            return Ok(JsonConvert.SerializeObject(new { content = "Hello World - Elefanti Video" }));
+            return Ok(JsonConvert.SerializeObject(new { content = "Hello World - Elefanti Video - DevOps Finished 10/4/2022 02:31" }));
         }
 
         [HttpGet("{text}")]
