@@ -26,5 +26,13 @@ pipeline {
                 sh 'docker logout'
             }
         }
+
+        stage('deploy to kubernetes') {
+            steps {
+                withKubeConfig(caCertificate: '', clusterName: 'elefanti-video', contextName: 'elefanti-video', credentialsId: 'kube-config-file', namespace: 'default', serverUrl: 'https://elefanti-video-dns-af669090.hcp.westeurope.azmk8s.io:443') {
+                    sh "kubectl set image deployment/video-backend-deployment elefanti-video-backend=detibaholli/elefantivideobackend:1.${GIT_COMMIT_NUMBER}"
+                }
+            }
+        }
     }
 }
