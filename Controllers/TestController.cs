@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace elefanti.video.backend.Controllers {
     [ApiController]
     [Route("controller")]
+    [Authorize]
     public class TestController : ControllerBase {
 
         [HttpGet]
