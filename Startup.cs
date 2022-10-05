@@ -2,6 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using elefanti.video.backend.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text;
+using elefanti.video.backend.Services;
 
 namespace elefanti.video.backend {
     public class Startup {
@@ -35,6 +40,20 @@ namespace elefanti.video.backend {
                                         policy.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
                                     });
             });
+            services.AddScoped<TokenService>();
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters {
+                        ValidateIssuerSigningKey = true,
+                        ClockSkew = TimeSpan.Zero,
+                        ValidIssuer = "Elefanti-Video",
+                        ValidAudience = "Elefanti-Video",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWTKey"))) // The same key as the one that generate the token
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +69,7 @@ namespace elefanti.video.backend {
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseCors(MyAllowedOrigins);
