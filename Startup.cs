@@ -1,0 +1,62 @@
+﻿using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.DependencyInjection;
+using elefanti.video.backend.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace elefanti.video.backend {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
+            Configuration = configuration;
+            MyAllowedOrigins = "AllowedOrigins";
+        }
+
+        public IConfiguration Configuration { get; }
+        public String MyAllowedOrigins { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services) {
+
+            services.AddControllers();
+
+            services.AddSwaggerGen();
+
+            services.AddDbContext<DbConnection>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddCors((options) => {
+                options.AddPolicy(name: MyAllowedOrigins,
+                                  policy => {
+                                      policy
+                                      .WithOrigins(
+                                         Configuration.GetValue<String>("OriginsAllowed"))
+                                       .AllowAnyHeader()
+                                       .AllowAnyMethod();
+                                  });
+                options.AddPolicy(name: "DevOrigins",
+                                    policy => {
+                                        policy.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
+                                    });
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            if (env.IsDevelopment()) {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Elefanti Video"));
+                app.UseCors("DevOrigins");
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseCors(MyAllowedOrigins);
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
+        }
+    }
+}
