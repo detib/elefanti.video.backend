@@ -1,43 +1,14 @@
 
-var myAllowedOrigins = "AllowedOrigins";
+using elefanti.video.backend;
 
-var builder = WebApplication.CreateBuilder(args);
+public class Program {
+    public static void Main(string[] args) {
+        CreateHostBuilder(args).Build().Run();
+    }
 
-// Add services to the container.
-
-builder.Services.AddCors((options) => {
-    options.AddPolicy(name: myAllowedOrigins,
-                      policy => {
-                          policy
-                          .WithOrigins(
-                             "http://20.71.6.202")
-                            //  "http://localhost:3000",
-                                            //  "*")
-                        //    .AllowAnyOrigin()
-                           .AllowAnyHeader()
-                           .AllowAnyMethod();
-                      });
-});
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder => {
+                webBuilder.UseStartup<Startup>();
+            });
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.UseCors(myAllowedOrigins);
-
-app.Run();
