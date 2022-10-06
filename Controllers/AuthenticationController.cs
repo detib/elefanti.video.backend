@@ -10,10 +10,12 @@ namespace elefanti.video.backend.Controllers;
 public class AuthenticationController : ControllerBase {
     public readonly DbConnection _dbConnection;
     public readonly TokenService _tokenService;
+    public readonly PasswordService _passwordService;
 
-    public AuthenticationController(DbConnection dbConnection, TokenService tokenService) {
+    public AuthenticationController(DbConnection dbConnection, TokenService tokenService, PasswordService passwordService) {
         _dbConnection = dbConnection;
         _tokenService = tokenService;
+        _passwordService = passwordService;
     }
 
     [HttpPost]
@@ -28,7 +30,7 @@ public class AuthenticationController : ControllerBase {
         if (user is null)
             return NotFound();
 
-        if (userCredentials.Password != user.Password)
+        if (!_passwordService.VerifyPassword(userCredentials.Password, user.Password))
             return Unauthorized();
 
         var tokenResponse = _tokenService.GenerateToken(user);
@@ -48,6 +50,8 @@ public class AuthenticationController : ControllerBase {
 
         if (userNameExists)
             return Conflict("Username already exists");
+
+        user.Password = _passwordService.HashPassword(user.Password);
 
         var userEntity = _dbConnection.Users.Add(user);
         _dbConnection.SaveChanges();
