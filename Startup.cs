@@ -23,7 +23,28 @@ namespace elefanti.video.backend {
 
             services.AddControllers();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(setup => {
+                var jwtSecurityScheme = new OpenApiSecurityScheme {
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+
+                    Reference = new OpenApiReference {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                setup.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    { jwtSecurityScheme, Array.Empty<string>() }
+                });
+
+            });
 
             services.AddDbContext<DbConnection>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors((options) => {
@@ -41,6 +62,7 @@ namespace elefanti.video.backend {
                                     });
             });
             services.AddScoped<TokenService>();
+            services.AddScoped<PasswordService>();
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
