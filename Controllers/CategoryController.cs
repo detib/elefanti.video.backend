@@ -32,7 +32,7 @@ public class CategoryController : ControllerBase {
 
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> PostCategory(Category category) {
+    public ActionResult<Category> PostCategory([FromBody] Category category) {
 
         var existingCategory = _dbConnection.Categories.FirstOrDefault(c => c.Name.ToLower() == category.Name.ToLower());
 
@@ -47,7 +47,7 @@ public class CategoryController : ControllerBase {
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> UpdateCategory(int id, Category category) {
+    public ActionResult<Category> UpdateCategory(int id,[FromBody] Category category) {
 
         var existingCategory = _dbConnection.Categories.FirstOrDefault(c => c.Id == id);
         
