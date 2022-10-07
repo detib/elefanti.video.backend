@@ -1,26 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace elefanti.video.backend.Models {
-    public class User {
+namespace elefanti.video.backend.Models;
+public class User {
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
-        public int Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
-        [Required]
-        public string? Name { get; set; }
-        [Required]
-        public string? Surname { get; set; }
-        [Required]
-        public string? Username { get; set; }
-        [Required]
-        public string? Password { get; set; }
-        public Role Role { get; set; } = Role.user;
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public Role Role { get; set; } = Role.user;
 
-    }
-    public enum Role {
-        admin,
-        user
+}
+public enum Role {
+    admin,
+    user
+}
+
+public class UserValidator : AbstractValidator<User> {
+    public UserValidator() {
+        RuleFor(user => user.Name).NotNull().NotEmpty();
+        RuleFor(user => user.Surname).NotNull().NotEmpty();
+        RuleFor(user => user.Username).NotNull().NotEmpty();
+        RuleFor(user => user.Password).NotNull().NotEmpty().MinimumLength(8);
     }
 }
