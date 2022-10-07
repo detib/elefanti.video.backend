@@ -54,6 +54,9 @@ public class CategoryController : ControllerBase {
         if (existingCategory is null)
             return NotFound("Category does not exist");
 
+        if (category.Name == null || category.Name == "")
+            return BadRequest("Category Name cannot be empty");
+
         existingCategory.Name = category.Name;
         _dbConnection.Categories.Update(existingCategory);
         _dbConnection.SaveChanges();
