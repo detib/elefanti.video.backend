@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using elefanti.video.backend.Services;
+using FluentValidation;
+using elefanti.video.backend.Models;
 
 namespace elefanti.video.backend {
     public class Startup {
@@ -63,6 +65,9 @@ namespace elefanti.video.backend {
             });
             services.AddScoped<TokenService>();
             services.AddScoped<PasswordService>();
+
+            services.AddScoped<IValidator<User>, UserValidator>();
+
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
