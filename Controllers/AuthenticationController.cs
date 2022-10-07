@@ -1,6 +1,7 @@
 ﻿using elefanti.video.backend.Data;
 using elefanti.video.backend.Models;
 using elefanti.video.backend.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace elefanti.video.backend.Controllers;
@@ -11,11 +12,14 @@ public class AuthenticationController : ControllerBase {
     public readonly DbConnection _dbConnection;
     public readonly TokenService _tokenService;
     public readonly PasswordService _passwordService;
+    private readonly IValidator<User> _userValidator;
 
-    public AuthenticationController(DbConnection dbConnection, TokenService tokenService, PasswordService passwordService) {
+    public AuthenticationController(DbConnection dbConnection, TokenService tokenService, 
+                                    PasswordService passwordService, IValidator<User> uservalidator) {
         _dbConnection = dbConnection;
         _tokenService = tokenService;
         _passwordService = passwordService;
+        _userValidator = uservalidator;
     }
 
     [HttpPost]
@@ -44,21 +48,22 @@ public class AuthenticationController : ControllerBase {
         if (user is null)
             return BadRequest("Invalid Input");
 
-        // validate user input, and hash password
+
+        var validationResult = _userValidator.Validate(user);
+        if(!validationResult.IsValid) 
+            return BadRequest(validationResult.Errors);
 
         var userNameExists = _dbConnection.Users.Any(c => c.Username == user.Username);
-
         if (userNameExists)
             return Conflict("Username already exists");
 
         user.Password = _passwordService.HashPassword(user.Password);
-
         var userEntity = _dbConnection.Users.Add(user);
         _dbConnection.SaveChanges();
         user.Id = userEntity.CurrentValues.GetValue<int>("Id");
 
-        var tokenResponse = _tokenService.GenerateToken(user);
 
+        var tokenResponse = _tokenService.GenerateToken(user);
         return Ok(tokenResponse);
     }
 }
