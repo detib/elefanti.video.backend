@@ -29,7 +29,7 @@ public class TokenService {
                 new Claim("Name", user.Name),
                 new Claim("Surname", user.Surname),
                 new Claim("Username", user.Username),
-                new Claim("Role", user.Role.ToString())
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             },
             expires: DateTime.UtcNow.AddHours(1));
 
