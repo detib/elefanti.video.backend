@@ -67,6 +67,7 @@ namespace elefanti.video.backend {
             services.AddScoped<PasswordService>();
 
             services.AddScoped<IValidator<User>, UserValidator>();
+            services.AddScoped<IValidator<VideoPost>, VideoValidator>();
 
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
