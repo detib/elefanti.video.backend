@@ -7,6 +7,7 @@ public class Comment {
     [Key]
     public int Id { get; set; }
     public string Content { get; set; }
+    public DateTime CreatedOn { get; set; }
     public string VideoId { get; set; }
     [ForeignKey("VideoId")]
     public Video Video { get; set; }
