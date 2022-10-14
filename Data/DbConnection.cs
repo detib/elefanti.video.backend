@@ -12,5 +12,6 @@ public class DbConnection : DbContext {
     public DbSet<Category> Categories { get; set; }
 
     public DbSet<Like> Likes { get; set; }
+    public DbSet<Comment> Comments { get; set; }
 }
 

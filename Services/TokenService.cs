@@ -61,5 +61,14 @@ public class TokenService {
 
         return true;
     }
+
+    public JwtPayload GetTokenPayload(string authHeader) {
+        var parts = authHeader.Split("Bearer ");
+        var authToken = parts[1];
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(authToken);
+        
+        return token.Payload;
+    }
 }
 
