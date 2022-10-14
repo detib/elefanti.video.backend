@@ -9,6 +9,7 @@ using System.Text;
 using elefanti.video.backend.Services;
 using FluentValidation;
 using elefanti.video.backend.Models;
+using System.Text.Json.Serialization;
 
 namespace elefanti.video.backend {
     public class Startup {
@@ -68,6 +69,7 @@ namespace elefanti.video.backend {
 
             services.AddScoped<IValidator<User>, UserValidator>();
             services.AddScoped<IValidator<VideoPost>, VideoValidator>();
+            services.AddScoped<IValidator<CommentPost>, CommentValidator>();
 
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
