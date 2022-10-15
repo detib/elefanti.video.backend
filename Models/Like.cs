@@ -14,13 +14,3 @@ public class Like {
     public User User { get; set; }
 
 }
-
-public class LikePost {
-    public string VideoId { get; set; }
-}
-
-public class LikeValidator : AbstractValidator<LikePost> {
-    public LikeValidator() {
-        RuleFor(c => c.VideoId).NotNull().NotEmpty();
-    }
-}
