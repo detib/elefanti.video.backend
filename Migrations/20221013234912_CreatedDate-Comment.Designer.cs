@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using elefanti.video.backend.Data;
@@ -11,9 +12,10 @@ using elefanti.video.backend.Data;
 namespace elefanti.video.backend.Migrations
 {
     [DbContext(typeof(DbConnection))]
-    partial class DbConnectionModelSnapshot : ModelSnapshot
+    [Migration("20221013234912_CreatedDate-Comment")]
+    partial class CreatedDateComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,30 +70,6 @@ namespace elefanti.video.backend.Migrations
                     b.HasIndex("VideoId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("elefanti.video.backend.Models.Like", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("VideoId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VideoId");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("elefanti.video.backend.Models.User", b =>
@@ -159,25 +137,6 @@ namespace elefanti.video.backend.Migrations
                 });
 
             modelBuilder.Entity("elefanti.video.backend.Models.Comment", b =>
-                {
-                    b.HasOne("elefanti.video.backend.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("elefanti.video.backend.Models.Video", "Video")
-                        .WithMany()
-                        .HasForeignKey("VideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Video");
-                });
-
-            modelBuilder.Entity("elefanti.video.backend.Models.Like", b =>
                 {
                     b.HasOne("elefanti.video.backend.Models.User", "User")
                         .WithMany()
