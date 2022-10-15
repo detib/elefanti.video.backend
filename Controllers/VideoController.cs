@@ -35,7 +35,7 @@ public class VideoController : ControllerBase {
 		var allVideos = _dbConnection.Videos
 							.Skip(from)
 							.Take(take)
-							.OrderBy(v => v.CreatedOn)
+							.OrderByDescending(v => v.CreatedOn)
 							.ToList();
 		return Ok(allVideos);
 	}

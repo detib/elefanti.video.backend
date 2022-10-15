@@ -25,7 +25,19 @@ public class CommentController : ControllerBase {
 
     [HttpGet("video/{videoid}")]
     public ActionResult<List<Comment>> Get(string videoid) {
-        var comments = _dbConnection.Comments.Where(c => c.VideoId == videoid).Include(c => c.User).ToList();
+        Console.WriteLine("Request");
+        var comments = _dbConnection.Comments.Where(c => c.VideoId == videoid)
+            .Select((c) =>  new {
+                c.Id,
+                c.UserId,
+                c.Content,
+                c.VideoId,
+                c.CreatedOn,
+                User = new {
+                    c.User.Username,
+                    c.User.Id
+                }
+                }).ToList();
 
         return Ok(JsonConvert.SerializeObject(comments));
     }
