@@ -53,7 +53,7 @@ public class CommentController : ControllerBase {
         if (!userIdIsValid)
             return BadRequest("Invalid user id");
 
-        var userComments = _dbConnection.Comments.Where(c => c.UserId == userid).ToList();
+        var userComments = _dbConnection.Comments.Where(c => c.UserId == userid).OrderByDescending(c => c.CreatedOn).ToList();
 
         return Ok(JsonConvert.SerializeObject(userComments));
     }
