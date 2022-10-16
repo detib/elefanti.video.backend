@@ -1,5 +1,6 @@
 ﻿using elefanti.video.backend.Data;
 using elefanti.video.backend.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,9 +11,10 @@ namespace elefanti.video.backend.Controllers;
 [Route("api/categories")]
 public class CategoryController : ControllerBase {
     private readonly DbConnection _dbConnection;
-
-    public CategoryController(DbConnection dbConnection) {
+    private readonly IValidator<CategoryDto> _validator;
+    public CategoryController(DbConnection dbConnection, IValidator<CategoryDto> validator) {
         _dbConnection = dbConnection;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -32,25 +34,34 @@ public class CategoryController : ControllerBase {
 
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> PostCategory([FromBody] Category category) {
+    public ActionResult<Category> PostCategory([FromBody] CategoryDto category) {
+
+        var validationResult = _validator.Validate(category);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
 
         var existingCategory = _dbConnection.Categories.FirstOrDefault(c => c.Name.ToLower() == category.Name.ToLower());
 
         if (existingCategory != null)
             return Conflict("Category already Exists");
 
-        var newCategory = _dbConnection.Categories.Add(category);
+        var newCategory = new Category() {
+            Name = category.Name
+        };
+
+        var addedCategory = _dbConnection.Categories.Add(newCategory);
         _dbConnection.SaveChanges();
-        return CreatedAtAction(nameof(Get), new { id = newCategory.Entity.Id}, category);
+        return CreatedAtAction(nameof(Get), new { id = addedCategory.Entity.Id }, category);
     }
 
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> UpdateCategory(int id,[FromBody] Category category) {
+    public ActionResult<Category> UpdateCategory(int id, [FromBody] CategoryDto category) {
 
         var existingCategory = _dbConnection.Categories.FirstOrDefault(c => c.Id == id);
-        
+
         if (existingCategory is null)
             return NotFound("Category does not exist");
 
