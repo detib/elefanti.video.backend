@@ -51,7 +51,10 @@ namespace elefanti.video.backend {
 
             });
 
-            var elasticConnectionSettings = new ConnectionSettings();
+            var elasticConnectionString = Configuration.GetConnectionString("ElasticConnection");
+            Console.WriteLine(elasticConnectionString);
+
+            var elasticConnectionSettings = new ConnectionSettings(new Uri(elasticConnectionString));
 
             elasticConnectionSettings.ServerCertificateValidationCallback((sender, cert, chain, errors) => true)
                     .EnableDebugMode();
