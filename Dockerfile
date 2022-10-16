@@ -17,6 +17,7 @@ FROM build AS publish
 RUN dotnet publish "elefanti.video.backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+WORKDIR /app/assets/category-images
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "elefanti.video.backend.dll"]
