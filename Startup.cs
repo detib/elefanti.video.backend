@@ -12,6 +12,7 @@ using FluentValidation;
 using elefanti.video.backend.Models;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 
 namespace elefanti.video.backend {
     public class Startup {
@@ -112,6 +113,13 @@ namespace elefanti.video.backend {
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles(new StaticFileOptions {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "assets")),
+                        RequestPath = "/api/assets"
+            });
+
 
             app.UseAuthentication();
             app.UseAuthorization();
