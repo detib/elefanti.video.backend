@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Security.Cryptography;
 
 namespace elefanti.video.backend.Controllers;
 
@@ -35,7 +34,7 @@ public class CategoryController : ControllerBase {
 
     [HttpPost]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> PostCategory([FromForm] CategoryDto category) {
+    public ActionResult<Category> PostCategory([FromBody] CategoryDto category) {
 
         var validationResult = _validator.Validate(category);
 
@@ -48,16 +47,8 @@ public class CategoryController : ControllerBase {
             return Conflict("Category already Exists");
 
         var newCategory = new Category() {
-            Name = category.Name,
-            ImageName = $"{Guid.NewGuid()}{Path.GetExtension(category.ImageFile.FileName)}"
+            Name = category.Name
         };
-
-        Console.WriteLine(newCategory.ImageName);
-
-        //save image to assets folder
-        using (var fileStream = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "assets", "category-images", newCategory.ImageName), FileMode.Create)) {
-            category.ImageFile.CopyTo(fileStream);
-        }
 
         var addedCategory = _dbConnection.Categories.Add(newCategory);
         _dbConnection.SaveChanges();
