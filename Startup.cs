@@ -19,6 +19,7 @@ namespace elefanti.video.backend {
             Configuration = configuration;
             MyAllowedOrigins = "AllowedOrigins";
         }
+        
 
         public IConfiguration Configuration { get; }
         public String MyAllowedOrigins { get; }
