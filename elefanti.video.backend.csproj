@@ -26,4 +26,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="assets\category-images\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
