@@ -12,10 +12,10 @@ public class AuthenticationController : ControllerBase {
     public readonly DbConnection _dbConnection;
     public readonly TokenService _tokenService;
     public readonly PasswordService _passwordService;
-    private readonly IValidator<User> _userValidator;
+    private readonly IValidator<UserPost> _userValidator;
 
     public AuthenticationController(DbConnection dbConnection, TokenService tokenService, 
-                                    PasswordService passwordService, IValidator<User> uservalidator) {
+                                    PasswordService passwordService, IValidator<UserPost> uservalidator) {
         _dbConnection = dbConnection;
         _tokenService = tokenService;
         _passwordService = passwordService;
@@ -44,7 +44,7 @@ public class AuthenticationController : ControllerBase {
 
     [HttpPost]
     [Route("signup")]
-    public ActionResult<TokenResponse> Signup([FromBody] User user) {
+    public ActionResult Signup([FromBody] UserPost user) {
         if (user is null)
             return BadRequest("Invalid Input");
 
@@ -58,13 +58,19 @@ public class AuthenticationController : ControllerBase {
             return Conflict("Username already exists");
 
         user.Password = _passwordService.HashPassword(user.Password);
-        var userEntity = _dbConnection.Users.Add(user);
+
+        var newUser = new User() {
+            Name = user.Username,
+            Surname = user.Surname,
+            Username = user.Username,
+            Password = user.Password,
+            Role = Role.user
+        };
+
+        var userEntity = _dbConnection.Users.Add(newUser);
         _dbConnection.SaveChanges();
-        user.Id = userEntity.CurrentValues.GetValue<int>("Id");
 
-
-        var tokenResponse = _tokenService.GenerateToken(user);
-        return Ok(tokenResponse);
+        return Ok();
     }
 }
 

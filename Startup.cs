@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Nest;
 using elefanti.video.backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using elefanti.video.backend.Services;
 using FluentValidation;
 using elefanti.video.backend.Models;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace elefanti.video.backend {
     public class Startup {
@@ -49,6 +51,14 @@ namespace elefanti.video.backend {
 
             });
 
+            var elasticConnectionSettings = new ConnectionSettings();
+
+            elasticConnectionSettings.ServerCertificateValidationCallback((sender, cert, chain, errors) => true)
+                    .EnableDebugMode();
+            elasticConnectionSettings.DefaultMappingFor<Video>(i => i.IndexName("videos"));
+
+            services.AddSingleton<IElasticClient>(new ElasticClient(elasticConnectionSettings));
+
             services.AddDbContext<DbConnection>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors((options) => {
                 options.AddPolicy(name: MyAllowedOrigins,
@@ -67,9 +77,10 @@ namespace elefanti.video.backend {
             services.AddScoped<TokenService>();
             services.AddScoped<PasswordService>();
 
-            services.AddScoped<IValidator<User>, UserValidator>();
+            services.AddScoped<IValidator<UserPost>, UserValidator>();
             services.AddScoped<IValidator<VideoPost>, VideoValidator>();
             services.AddScoped<IValidator<CommentPost>, CommentValidator>();
+            services.AddScoped<IValidator<CategoryDto>, CategoryValidator>();
 
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
