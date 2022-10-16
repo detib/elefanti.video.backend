@@ -13,15 +13,23 @@ public class User {
     public string Surname { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
-    public Role Role { get; set; } = Role.user;
+    public Role Role { get; set; }
 
 }
+
+public class UserPost {
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+
 public enum Role {
     admin,
     user
 }
 
-public class UserValidator : AbstractValidator<User> {
+public class UserValidator : AbstractValidator<UserPost> {
     public UserValidator() {
         RuleFor(user => user.Name).NotNull().NotEmpty();
         RuleFor(user => user.Surname).NotNull().NotEmpty();

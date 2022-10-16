@@ -47,7 +47,7 @@ public class LikeController : ControllerBase {
         if (!userIdIsValid)
             return BadRequest("Invalid user id");
 
-        var allLikes = _dbConnection.Likes.Where(l => l.UserId == userid).ToList();
+        var allLikes = _dbConnection.Likes.Where(l => l.UserId == userid).Include(l => l.Video).ToList();
 
         return Ok(JsonConvert.SerializeObject(allLikes));
     }
@@ -80,7 +80,8 @@ public class LikeController : ControllerBase {
          );
 
         _dbConnection.SaveChanges();
-        return CreatedAtAction(nameof(Get), new { id = addedLike.Entity.Id }, addedLike.Entity);
+        // return CreatedAtAction(nameof(Get), new { id = addedLike.Entity.Id }, addedLike.Entity);
+        return Ok(addedLike.Entity);
     }
 
 
