@@ -13,11 +13,9 @@ namespace elefanti.video.backend.Controllers;
 public class CategoryController : ControllerBase {
     private readonly DbConnection _dbConnection;
     private readonly IValidator<CategoryDto> _validator;
-    private readonly IWebHostEnvironment _env;
-    public CategoryController(DbConnection dbConnection, IValidator<CategoryDto> validator, IWebHostEnvironment env) {
+    public CategoryController(DbConnection dbConnection, IValidator<CategoryDto> validator) {
         _dbConnection = dbConnection;
         _validator = validator;
-        _env = env;
     }
 
     [HttpGet]
@@ -57,7 +55,7 @@ public class CategoryController : ControllerBase {
         Console.WriteLine(newCategory.ImageName);
 
         //save image to assets folder
-        using (var fileStream = new FileStream(Path.Combine(_env.ContentRootPath, "assets", "category-images", newCategory.ImageName), FileMode.Create)) {
+        using (var fileStream = new FileStream(Path.Combine("/app", "assets", "category-images", newCategory.ImageName), FileMode.Create)) {
             category.ImageFile.CopyTo(fileStream);
         }
 
