@@ -67,7 +67,7 @@ public class CategoryController : ControllerBase {
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = "admin")]
-    public ActionResult<Category> UpdateCategory(int id, [FromBody] CategoryDto category) {
+    public ActionResult<Category> UpdateCategory(int id, [FromBody] CategoryUpdateDto category) {
 
         var existingCategory = _dbConnection.Categories.FirstOrDefault(c => c.Id == id);
 

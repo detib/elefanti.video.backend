@@ -14,6 +14,10 @@ public class CategoryDto {
     public IFormFile ImageFile { get; set; }
 }
 
+public class CategoryUpdateDto { 
+    public string Name { get; set; }
+}
+
 public class CategoryValidator : AbstractValidator<CategoryDto> {
     public CategoryValidator() {
         RuleFor(c => c.Name).NotNull().NotEmpty();

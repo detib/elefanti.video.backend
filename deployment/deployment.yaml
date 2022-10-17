@@ -20,10 +20,23 @@ spec:
         image: detibaholli/elefantivideobackend:latest
         ports:
         - containerPort: 80
-      #   volumeMounts:
-      #   - name: video-backend
-      #     mountPath: /var/video-backend_home
-      # volumes:
-      # - name: video-backend
-      #   persistentVolumeClaim:
-      #     claimName: video-backend-pvc
+        volumeMounts:
+        - name: video-backend
+          mountPath: /app/assets
+      volumes:
+      - name: video-backend
+        persistentVolumeClaim:
+          claimName: video-backend-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: video-backend-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: managed-csi

@@ -33,9 +33,9 @@ public class VideoController : ControllerBase {
             return BadRequest("You cannot take less than 1 videos");
 
         var allVideos = _dbConnection.Videos
+                            .OrderByDescending(v => v.CreatedOn)
                             .Skip(from)
                             .Take(take)
-                            .OrderByDescending(v => v.CreatedOn)
                             .ToList();
         return Ok(allVideos);
     }
@@ -73,7 +73,7 @@ public class VideoController : ControllerBase {
         var categoryExists = _dbConnection.Categories.Any(c => c.Id == video.CategoryId);
 
         if (!categoryExists)
-            return Conflict("Category does not exist");
+            return BadRequest("Category does not exist");
 
         var validationResult = _validator.Validate(video);
         if (!validationResult.IsValid)
