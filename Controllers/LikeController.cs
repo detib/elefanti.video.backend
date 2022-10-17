@@ -68,14 +68,14 @@ public class LikeController : ControllerBase {
         if (existingLike is not null)
             return Conflict("You have already liked this video");
 
-        var addedLike = _dbConnection.Likes.Add(
+        var addedLike = await _dbConnection.Likes.AddAsync(
             new() {
                 VideoId = videoid,
                 UserId = userid
             }
          );
 
-        _dbConnection.SaveChanges();
+        await _dbConnection.SaveChangesAsync();
         // return CreatedAtAction(nameof(Get), new { id = addedLike.Entity.Id }, addedLike.Entity);
         return Ok(addedLike.Entity);
     }
