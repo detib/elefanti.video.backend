@@ -31,7 +31,7 @@ public class TokenService {
                 new Claim("Username", user.Username),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             },
-            expires: DateTime.UtcNow.AddHours(6));
+            expires: DateTime.UtcNow.AddMonths(1));
 
         var jwtHandler = new JwtSecurityTokenHandler();
         return new() { Token = jwtHandler.WriteToken(jwt) };

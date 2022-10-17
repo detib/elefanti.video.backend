@@ -77,7 +77,7 @@ namespace elefanti.video.backend {
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters {
                         ValidateIssuerSigningKey = true,
-                        ClockSkew = TimeSpan.Zero,
+                        ClockSkew = TimeSpan.FromDays(1),
                         ValidIssuer = "Elefanti-Video",
                         ValidAudience = "Elefanti-Video",
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWTKey"))) // The same key as the one that generate the token
@@ -98,6 +98,7 @@ namespace elefanti.video.backend {
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
+            app.UseCors(MyAllowedOrigins);
 
             app.UseStaticFiles(new StaticFileOptions {
                 FileProvider = new PhysicalFileProvider(
@@ -107,7 +108,6 @@ namespace elefanti.video.backend {
 
 
 
-            app.UseCors(MyAllowedOrigins);
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
