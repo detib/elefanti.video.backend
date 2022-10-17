@@ -55,7 +55,7 @@ public class LikeController : ControllerBase {
     [HttpPost]
     [Authorize]
     [Route("{videoid}")]
-    public ActionResult<Like> AddLike(string videoid) {
+    public async Task<ActionResult<Like>> AddLike(string videoid) {
         var authHeader = HttpContext.Request.Headers.Authorization.ToString();
         var tokenPayload = _tokenService.GetTokenPayload(authHeader);
 
@@ -63,10 +63,6 @@ public class LikeController : ControllerBase {
         if (!userIdIsValid)
             return BadRequest("Invalid user id");
 
-
-        var video = _dbConnection.Videos.FirstOrDefault(v => v.Id == videoid);
-        if (video is null)
-            return NotFound("Video was not found");
 
         var existingLike = _dbConnection.Likes.FirstOrDefault(l => l.VideoId == videoid && l.UserId == userid);
         if (existingLike is not null)
