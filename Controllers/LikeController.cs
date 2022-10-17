@@ -64,7 +64,7 @@ public class LikeController : ControllerBase {
             return BadRequest("Invalid user id");
 
 
-        var existingLike = _dbConnection.Likes.FirstOrDefault(l => l.VideoId == videoid && l.UserId == userid);
+        var existingLike = await _dbConnection.Likes.FirstOrDefaultAsync(l => l.VideoId == videoid && l.UserId == userid);
         if (existingLike is not null)
             return Conflict("You have already liked this video");
 
