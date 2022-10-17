@@ -1,17 +1,12 @@
 ﻿using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Nest;
 using elefanti.video.backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using elefanti.video.backend.Services;
 using FluentValidation;
 using elefanti.video.backend.Models;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 
 namespace elefanti.video.backend {
@@ -24,7 +19,6 @@ namespace elefanti.video.backend {
         public IConfiguration Configuration { get; }
         public String MyAllowedOrigins { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
@@ -52,16 +46,6 @@ namespace elefanti.video.backend {
 
             });
 
-            var elasticConnectionString = Configuration.GetConnectionString("ElasticConnection");
-            Console.WriteLine(elasticConnectionString);
-
-            var elasticConnectionSettings = new ConnectionSettings(new Uri(elasticConnectionString));
-
-            elasticConnectionSettings.ServerCertificateValidationCallback((sender, cert, chain, errors) => true)
-                    .EnableDebugMode();
-            elasticConnectionSettings.DefaultMappingFor<Video>(i => i.IndexName("videos"));
-
-            services.AddSingleton<IElasticClient>(new ElasticClient(elasticConnectionSettings));
 
             services.AddDbContext<DbConnection>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors((options) => {
@@ -101,7 +85,6 @@ namespace elefanti.video.backend {
                 });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
