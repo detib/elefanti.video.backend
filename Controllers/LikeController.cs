@@ -21,8 +21,8 @@ public class LikeController : ControllerBase {
     }
 
     [HttpGet("{videoid}")]
-    public ActionResult<List<Like>> Get(string videoid) {
-        var likes = _dbConnection.Likes.Where(c => c.VideoId == videoid)
+    public async Task<ActionResult<List<Like>>> Get(string videoid) {
+        var likes = await _dbConnection.Likes.Where(c => c.VideoId == videoid)
             .Select(l => new {
                 l.Id,
                 l.VideoId,
@@ -31,7 +31,7 @@ public class LikeController : ControllerBase {
                     l.User.Username,
                     l.User.Id
                 }
-            }).ToList();
+            }).ToListAsync();
 
         return Ok(JsonConvert.SerializeObject(likes));
     }
@@ -39,7 +39,7 @@ public class LikeController : ControllerBase {
     [HttpGet]
     [Authorize]
     [Route("user")]
-    public ActionResult<List<Like>> GetUserLikes() {
+    public async Task<ActionResult<List<Like>>> GetUserLikes() {
         var authHeader = HttpContext.Request.Headers.Authorization.ToString();
         var tokenPayload = _tokenService.GetTokenPayload(authHeader);
 
@@ -47,7 +47,7 @@ public class LikeController : ControllerBase {
         if (!userIdIsValid)
             return BadRequest("Invalid user id");
 
-        var allLikes = _dbConnection.Likes.Where(l => l.UserId == userid).Include(l => l.Video).ToList();
+        var allLikes = await _dbConnection.Likes.Where(l => l.UserId == userid).Include(l => l.Video).ToListAsync();
 
         return Ok(JsonConvert.SerializeObject(allLikes));
     }
@@ -84,7 +84,7 @@ public class LikeController : ControllerBase {
     [HttpDelete]
     [Authorize]
     [Route("{videoid}")]
-    public ActionResult<Like> RemoveLike(string videoid) {
+    public async Task<ActionResult<Like>> RemoveLike(string videoid) {
         var authHeader = HttpContext.Request.Headers.Authorization.ToString();
 
         var tokenPayload = _tokenService.GetTokenPayload(authHeader);
@@ -93,7 +93,7 @@ public class LikeController : ControllerBase {
         if (!userIdIsValid)
             return BadRequest("Invalid user id");
 
-        var exisitingLike = _dbConnection.Likes.FirstOrDefault(l => l.VideoId == videoid);
+        var exisitingLike = await _dbConnection.Likes.FirstOrDefaultAsync(l => l.VideoId == videoid);
 
         if (exisitingLike is null)
             return NotFound("Like is not found!");
@@ -104,8 +104,7 @@ public class LikeController : ControllerBase {
 
 
         _dbConnection.Likes.Remove(exisitingLike);
-        _dbConnection.SaveChanges();
-
+        await _dbConnection.SaveChangesAsync();
         return NoContent();
     }
 
