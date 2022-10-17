@@ -18,11 +18,21 @@ public class CategoryController : ControllerBase {
         _validator = validator;
     }
 
+    /**
+     * This method returns list of existing Categories.
+     **/ 
+
     [HttpGet]
     public ActionResult<List<Category>> Get() {
         var categories = JsonConvert.SerializeObject(_dbConnection.Categories.ToList());
         return Ok(categories);
     }
+
+    /**
+     * This method retuns specific Category in terms with requested CategoryId.
+     * Returns Not Found in the case of non-existent Category with requested CategoryId
+     * Returns Ok and Category in case of success..
+     **/
 
     [HttpGet("{id}")] // ? 
     public ActionResult<Category> GetCategory(int id) {
@@ -32,6 +42,12 @@ public class CategoryController : ControllerBase {
         return Ok(category);
     }
 
+    /**
+     * This method is available only to Admin users to create new Categories.
+     * Returns Bad request in failure during Category validation.
+     * Returns Conflict in the case that Category already exists.
+     * Returns CreatedAtAction and adds Category to Database.
+     **/
 
     [HttpPost]
     [Authorize(Roles = "admin")]
@@ -64,6 +80,13 @@ public class CategoryController : ControllerBase {
         return CreatedAtAction(nameof(Get), new { id = addedCategory.Entity.Id }, category);
     }
 
+    /**
+     * This method is only available to Admin users to update existing Categories.
+     * Returns Not Found if Category with recieved CategoryId does not exist.
+     * Returns BadRequest if invalid Category Name input.
+     * Returns Ok and updates existing Category values.
+     **/
+
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = "admin")]
@@ -83,6 +106,12 @@ public class CategoryController : ControllerBase {
 
         return Ok(existingCategory);
     }
+
+    /**
+     * This method is only available to Admin users to delete existing Categories.
+     * Returns Not Found if Category with recieved CategoryId does not exist.
+     * Returns Ok and removes Category from the database.
+     **/
 
     [HttpDelete]
     [Route("{id}")]

@@ -18,6 +18,11 @@ public class CategoryUpdateDto {
     public string Name { get; set; }
 }
 
+/**
+ * This function validates input during the creation of a new category.
+ * Name, Image file must not be empty.
+ * Image file is validated through Regular Expression, must be jpg, png, jpeg, webp.
+ **/   
 public class CategoryValidator : AbstractValidator<CategoryDto> {
     public CategoryValidator() {
         RuleFor(c => c.Name).NotNull().NotEmpty();

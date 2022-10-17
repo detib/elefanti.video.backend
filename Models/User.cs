@@ -29,6 +29,12 @@ public enum Role {
     user
 }
 
+/**
+ * This function validates User Creation values.
+ * All users must have Name, Surname, Username, Password values.
+ * Password must be longer than 8 characters.
+ **/ 
+
 public class UserValidator : AbstractValidator<UserPost> {
     public UserValidator() {
         RuleFor(user => user.Name).NotNull().NotEmpty();

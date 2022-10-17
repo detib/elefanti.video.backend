@@ -22,6 +22,11 @@ public class CommentPost {
     public string VideoId { get; set; }
 }
 
+/**
+ * This function validates input during comment creation.
+ * Comment must belong to a specific video and must not be null.
+ **/
+
 public class CommentValidator : AbstractValidator<CommentPost> {
     public CommentValidator() {
         RuleFor(c => c.Content).NotNull().NotEmpty();

@@ -30,6 +30,10 @@ public class VideoPut {
     public int? CategoryId { get; set; }
 }
 
+/**
+ * This function validates Video Creation values.
+ * All Videos must have a Id, Title, and a CategoryId value.
+ **/ 
 
 public class VideoValidator : AbstractValidator<VideoPost> {
     public VideoValidator() {

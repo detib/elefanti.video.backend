@@ -20,6 +20,10 @@ public class LikeController : ControllerBase {
         _tokenService = tokenService;
     }
 
+    /**
+     * This method returns amount of likes in a video.
+     **/ 
+
     [HttpGet("{videoid}")]
     public async Task<ActionResult<List<Like>>> Get(string videoid) {
         var likes = await _dbConnection.Likes.Where(c => c.VideoId == videoid)
@@ -36,6 +40,11 @@ public class LikeController : ControllerBase {
         return Ok(JsonConvert.SerializeObject(likes));
     }
 
+    /**
+     * This method returns list of User likes.
+     * Returns Bad Request if User Id is invalid.
+     **/ 
+
     [HttpGet]
     [Authorize]
     [Route("user")]
@@ -51,6 +60,10 @@ public class LikeController : ControllerBase {
 
         return Ok(JsonConvert.SerializeObject(allLikes));
     }
+
+    /**
+     * This method handles adding likes to videos using VideoId.
+     **/ 
 
     [HttpPost]
     [Authorize]
@@ -80,6 +93,9 @@ public class LikeController : ControllerBase {
         return Ok(addedLike.Entity);
     }
 
+    /**
+     * This method handles removing likes from videos using VideoId.
+     **/ 
 
     [HttpDelete]
     [Authorize]

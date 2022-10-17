@@ -4,6 +4,12 @@ using System.Security.Cryptography;
 namespace elefanti.video.backend.Services;
 public class PasswordService {
 
+    
+    /**
+     * This function hashes and salts the password input recieved by the user,
+     * and returns the hash and the salt.
+     *  
+     **/
     public string HashPassword(string password) {
 
         byte[] salt = RandomNumberGenerator.GetBytes(256 / 8);
@@ -20,6 +26,11 @@ public class PasswordService {
         return $"{Convert.ToBase64String(salt)}:{hash}";
     }
 
+    /**
+     * This function recieves and compares the user input to the existing password,
+     * returns true if the password is correct.
+     *      
+     **/   
     public bool VerifyPassword(string userInput, string existingPassword) {
 
         var inputArray = existingPassword.Split(":");

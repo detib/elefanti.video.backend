@@ -23,6 +23,10 @@ public class CommentController : ControllerBase {
         _tokenService = tokenService;
     }
 
+    /**
+     * This method returns List of Comments under a specific Video.
+     **/ 
+
     [HttpGet("video/{videoid}")]
     public ActionResult<List<Comment>> Get(string videoid) {
         Console.WriteLine("Request");
@@ -42,6 +46,10 @@ public class CommentController : ControllerBase {
         return Ok(JsonConvert.SerializeObject(comments));
     }
 
+    /**
+     * This method returns List of Comments under a specific User.
+     **/ 
+
     [HttpGet("user/")]
     [Authorize]
     public ActionResult<List<Comment>> GetUserComments() {
@@ -58,7 +66,14 @@ public class CommentController : ControllerBase {
         return Ok(JsonConvert.SerializeObject(userComments));
     }
 
-    
+    /**
+     * This method creates a new Comment under a specific Video.
+     * Returns Bad Request in the case of value being null, failure during Comment and User validation .
+     * Returns Not Found in the case of non-existent Video or User with given Id. 
+     * Returns Ok adds new comment under Video in the database.
+     **/ 
+
+
     [HttpPost]
     [Authorize]
     public ActionResult<Comment> PostComment([FromBody] CommentPost comment) {
@@ -101,6 +116,13 @@ public class CommentController : ControllerBase {
         return Ok(JsonConvert.SerializeObject(newComment.Entity));
     }
 
+    /**
+     * This method updates an existing Comment.
+     * Returns Bad Request in the case of invalid CommentId, failure during user validation.
+     * Returns Not Found in the case of non-existing Comment.
+     * Returns Ok updates specific Comment in the database.
+     **/ 
+
     [HttpPut]
     [Route("{commentid}")]
     [Authorize]
@@ -132,6 +154,14 @@ public class CommentController : ControllerBase {
 
         return Ok(JsonConvert.SerializeObject(existingComment));
     }
+
+    /**
+     * This method deletes an existing Comment.
+     * Returns Bad Request in the case of invalid CommentId, failure during user validation.
+     * Returns Not Found in the case of non-existing Comment.
+     * Returns Unauthorized in the case that current User is not Comment Owner.
+     * Returns No Content in success.
+     **/
 
     [HttpDelete]
     [Route("{commentid}")]

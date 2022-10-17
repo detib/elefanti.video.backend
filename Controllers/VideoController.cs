@@ -18,6 +18,11 @@ public class VideoController : ControllerBase {
         _validator = validator;
     }
 
+    /**
+     * This method recieves a search query.
+     * Returns a list of videos that refer to the query.
+     **/ 
+
     [HttpGet("search/{query}")]
     public ActionResult<List<Video>> SearchVideos(string query) {
         var videos = _dbConnection.Videos
@@ -26,6 +31,12 @@ public class VideoController : ControllerBase {
         				.ToList();        
         return Ok(videos);
     }
+
+    /**
+     * This method recieves parameters, starting position and amount of videos to be returned.
+     * Returns Bad request if amount of videos to return is null or less than 1.
+     * Returns list of videos in that range.
+     **/ 
 
     [HttpGet]
     public ActionResult<Video> Get(int from, int take) {
@@ -39,6 +50,12 @@ public class VideoController : ControllerBase {
                             .ToList();
         return Ok(allVideos);
     }
+
+    /**
+     * This method recieves a videoId.
+     * VideoId parameter cannot be null.
+     * Returns the specific video with that Id in the case that it exists.
+     **/
 
     [HttpGet("{id}")]
     public ActionResult<Video> GetVideo(string id) {
@@ -55,6 +72,12 @@ public class VideoController : ControllerBase {
         return Ok(video);
     }
 
+    /**
+     * This method recieves a categoryId.
+     * CategoryId parameter must not be null.
+     * Returns the category with that Id in the case that it exists.
+     **/
+
     [HttpGet("category/{categoryid}")]
     public ActionResult<Video> GetByCategory(int categoryid) {
 
@@ -66,6 +89,12 @@ public class VideoController : ControllerBase {
         return Ok(videosInCategory);
     }
 
+    /**
+     * This method is available only to Admin users to create new posts.
+     * Returns Bad request in failure during Validation, non-existent Category.
+     * Returns Conflict in the case that Video already exists.
+     * Returns OK and adds Video to Database.
+     **/
     [HttpPost]
     [Authorize(Roles = "admin")]
     public ActionResult<Video> PostVideo([FromBody] VideoPost video) {
@@ -98,6 +127,12 @@ public class VideoController : ControllerBase {
         return CreatedAtAction(nameof(Get), new { id = videoAdded.Entity.Id }, video);
     }
 
+    /**
+     * This method is only available to Admin users to update existing videos.
+     * Returns Not Found if video with recieved VideoId does not exist.
+     * Returns Ok and updates existing Video values.
+     **/ 
+
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = "admin")]
@@ -106,7 +141,7 @@ public class VideoController : ControllerBase {
         var existingVideo = _dbConnection.Videos.FirstOrDefault(v => v.Id == id);
 
         if (existingVideo is null)
-            return NotFound("Category does not exist");
+            return NotFound("Video does not exist");
 
         if (video.CategoryId is not null)
             existingVideo.CategoryId = (int)video.CategoryId;
@@ -120,6 +155,12 @@ public class VideoController : ControllerBase {
 
         return Ok(existingVideo);
     }
+
+    /**
+     * This method is only available to Admin users to delete existing videos.
+     * Returns Not Found if video with recieved VideoId does not exist.
+     * Returns Ok and removes Video from the database.
+     **/ 
 
     [HttpDelete]
     [Route("{id}")]

@@ -22,6 +22,14 @@ public class AuthenticationController : ControllerBase {
         _userValidator = uservalidator;
     }
 
+    /**
+     * This method validates User credentials during login.
+     * Returns Bad Request in the case of invalid credentials.
+     * Returns Not Found if User does not exist.
+     * Returns Unauthorized in the case of invalid Password.
+     * Returns Ok in the case of valid credentials.
+     **/
+
     [HttpPost]
     [Route("login")]
     public ActionResult<TokenResponse> Login([FromBody] UserCredentials userCredentials) {
@@ -41,6 +49,13 @@ public class AuthenticationController : ControllerBase {
 
         return Ok(tokenResponse);
     }
+
+    /**
+     * This method validates User credentials during signup.
+     * Returns Bad Request in the case of invalid credential input, failure in User validation.
+     * Returns Conflict in the case of existing username.
+     * Returns Ok, creates and adds User to the Database.
+     **/
 
     [HttpPost]
     [Route("signup")]
