@@ -95,7 +95,9 @@ namespace elefanti.video.backend {
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseStaticFiles(new StaticFileOptions {
                 FileProvider = new PhysicalFileProvider(
@@ -104,8 +106,6 @@ namespace elefanti.video.backend {
             });
 
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseCors(MyAllowedOrigins);
 
