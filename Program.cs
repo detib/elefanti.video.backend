@@ -9,6 +9,7 @@ using FluentValidation;
 using elefanti.video.backend.Models;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder();
 var services = builder.Services;
@@ -54,6 +55,14 @@ services.AddCors((options) => {
                             policy.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader();
                         });
 });
+
+services.AddHttpLogging(options => {
+    options.LoggingFields = HttpLoggingFields.RequestPropertiesAndHeaders |
+                            HttpLoggingFields.RequestBody | HttpLoggingFields.ResponseHeaders |
+                            HttpLoggingFields.ResponseBody | HttpLoggingFields.ResponseStatusCode |
+                            HttpLoggingFields.ResponsePropertiesAndHeaders | HttpLoggingFields.Response;
+});
+
 services.AddScoped<TokenService>();
 services.AddScoped<PasswordService>();
 
@@ -78,18 +87,19 @@ services.AddAuthentication(options => {
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors(MyAllowedOrigins);
+app.UseHttpsRedirection();
+
 
 app.UseStaticFiles(new StaticFileOptions {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(app.Environment.ContentRootPath, "assets")),
     RequestPath = "/api/assets"
 });
+app.UseHttpLogging();
 
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Elefanti Video"));
