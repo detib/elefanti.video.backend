@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: elefanti.video.backend
+  annotations:
+    github.com/project-slug: detib/elefanti.video.backend
+spec:
+  type: other
+  lifecycle: unknown
+  owner: Deti, Genci
